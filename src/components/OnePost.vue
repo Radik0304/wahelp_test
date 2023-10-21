@@ -1,7 +1,15 @@
 <template>
   <div class="one-post__container">
     <h3>{{ $props.user }}</h3>
-    <span>{{ $props.comment }}</span>
+    <span class="post">{{ $props.post }}</span>
+    <span class="comments">
+      <p>comments:</p>
+      <ul v-for="comment in $props.comments" :key="comment.id">
+        <li>
+          {{ comment.body }}
+        </li>
+      </ul>
+    </span>
     <div class="add-comment">
       <button @click="addComment">Добавить комментарий</button>
       <textarea type="text" v-model="enteredComment"></textarea>
@@ -14,7 +22,8 @@ export default {
   name: "OnePost",
   props: {
     user: String,
-    comment: String,
+    post: String,
+    comments: Array,
     idUser: Number,
   },
   data() {
@@ -46,9 +55,11 @@ export default {
 };
 </script>
   
-  <style scoped>
+<style scoped>
 .one-post__container {
   border: 1px solid black;
+  display: flex;
+  flex-direction: column;
 }
 .add-comment {
   display: flex;
@@ -67,6 +78,15 @@ textarea {
   margin-top: 1rem;
   margin-bottom: 1rem;
   height: 100px;
+}
+.comments {
+  border: 1px solid red;
+}
+.comments p {
+  font-weight: bold;
+}
+.post {
+  font-weight: bold;
 }
 </style>
   

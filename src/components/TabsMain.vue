@@ -20,9 +20,8 @@
         :key="post.postId"
         :class="['posts_list', { hidden: !is_active_posts }]"
       >
-        <OnePost :user="users_keyBy[post.userId]?.name" :comment="post.body" />
+        <OnePost :user="users_keyBy[post.userId]?.name" :post="post.body" :comments="comments_groupBy[post.id]"/>
       </div>
-      <!-- {{users_keyBy}} -->
     </div>
   </div>
 </template>
@@ -42,9 +41,8 @@ export default {
       users: [], //пользователи
       is_active_posts: true, //активен таб с постами
       is_active_users: false, //активен таб с пользователями
-      posts_keyBy:{},
-      users_keyBy:{},
-      comments_keyBy:{}
+      users_keyBy:{}, // список пользователей по id
+      comments_groupBy:{} // список комментарий для каждого поста
     };
   },
 
@@ -68,8 +66,6 @@ export default {
       if (res.ok) {
         this.users = users;
         this.users_keyBy = _.keyBy(users, 'id')
-        console.log(this.users)
-        console.log(this.users_keyBy)
       } else {
         console.log("Ошибка получения данных с сервера");
         throw Error;
@@ -82,15 +78,13 @@ export default {
       const comments = await res.json();
       if (res.ok) {
         this.comments = comments;
+        this.comments_groupBy = _.groupBy(comments, 'postId')
       } else {
         console.log("Ошибка получения данных с сервера");
         throw Error;
       }
     },
 
-    get fuck() {
-      return this.users_keyBy
-    },
     /** Выбрать таб с постами */
     selectPostsTab() {
       this.is_active_posts = true;
