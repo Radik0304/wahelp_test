@@ -1,6 +1,6 @@
 <template>
   <div class="one-post__container">
-    <h3>{{ $props.idUser }}</h3>
+    <h3>{{ $props.user }}</h3>
     <span>{{ $props.comment }}</span>
     <div class="add-comment">
       <button @click="addComment">Добавить комментарий</button>
@@ -24,24 +24,24 @@ export default {
   },
   methods: {
     /** Добавить комментарий */
-    async addComment() {
-        const pushedData = {
-            id: this.$props.id,
-            body: this.enteredComment,
-        }
-      const res = await fetch("https://jsonplaceholder.typicode.com/comments", {
-        method: "POST",
-        body: JSON.stringify(pushedData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if(res.ok){
-        alert('комментарий добавлен')
-      } else {
-        console.log('Ошибка отправки данных')
-      }
-    },
+    // async addComment() {
+    //     const pushedData = {
+    //         id: this.$props.id,
+    //         body: this.enteredComment,
+    //     }
+    //   const res = await fetch("https://jsonplaceholder.typicode.com/comments", {
+    //     method: "POST",
+    //     body: JSON.stringify(pushedData),
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   });
+    //   if(res.ok){
+    //     alert('комментарий добавлен')
+    //   } else {
+    //     console.log('Ошибка отправки данных')
+    //   }
+    // },
   },
 };
 </script>

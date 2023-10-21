@@ -22,15 +22,14 @@
       >
         <OnePost :user="users_keyBy[post.userId]?.name" :comment="post.body" />
       </div>
-
+      <!-- {{users_keyBy}} -->
     </div>
   </div>
 </template>
 
 <script>
 import OnePost from "./OnePost.vue";
-// import _ from 'lodash'
-// import {isProxy, toRaw} from 'vue'
+import _ from 'lodash'
 export default {
   name: "TabsMain",
   components: {
@@ -68,6 +67,9 @@ export default {
       const users = await res.json();
       if (res.ok) {
         this.users = users;
+        this.users_keyBy = _.keyBy(users, 'id')
+        console.log(this.users)
+        console.log(this.users_keyBy)
       } else {
         console.log("Ошибка получения данных с сервера");
         throw Error;
@@ -86,19 +88,9 @@ export default {
       }
     },
 
-    // get fuck() {
-    //   const newArray = [];
-    //   for(let i =0; i < this.posts.length; i++){
-    //     for(let k=0; k < this.users.length; k++){
-    //       for(let j=0; j < this.comments.length; j++){
-    //         if(this.posts[i].userId===this.users[k].id && this.comments[j].postId===this.posts[i].id){
-    //           newArray.push(this.posts[i],this.users[k],this.comments[j])
-    //         }
-    //       }
-    //     }
-    //   }
-    //   return newArray
-    // },
+    get fuck() {
+      return this.users_keyBy
+    },
     /** Выбрать таб с постами */
     selectPostsTab() {
       this.is_active_posts = true;
