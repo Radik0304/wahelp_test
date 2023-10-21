@@ -15,7 +15,10 @@
       </div>
     </div>
     <div class="tab-content">
-      <div class="filtered-user_header" v-if="is_active_one_user && is_active_posts">
+      <div
+        class="filtered-user_header"
+        v-if="is_active_one_user && is_active_posts"
+      >
         <h2>Посты пользователя {{ name_filtered_user }}</h2>
         <button class="close" @click="clearFilter"></button>
       </div>
@@ -46,7 +49,6 @@
           @showPostsUser="showPostsUser"
         />
       </div>
-      
     </div>
   </div>
 </template>
@@ -71,7 +73,7 @@ export default {
       is_active_posts: true, //активен таб с постами
       is_active_users: false, //активен таб с пользователями
       is_data_await: true, // загрузка данных
-      name_filtered_user: '', // имя пользователя, по котормоу фильтруем
+      name_filtered_user: "", // имя пользователя, по котормоу фильтруем
       is_active_one_user: false, // смотрим посты одного пользователя
       users_keyBy: {}, // список пользователей по id
       comments_groupBy: {}, // список комментарий для каждого поста
@@ -82,11 +84,13 @@ export default {
     /** Получить список постов */
     async getPosts() {
       this.posts = [];
-      const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
+      const res = await fetch(
+        `https://jsonplaceholder.typicode.com/posts?offset=1&pageSize=10`
+      );
       const posts = await res.json();
       if (res.ok) {
-        this.getComments()
-        this.getUsers()
+        this.getComments();
+        this.getUsers();
         this.posts = posts;
       } else {
         console.log("Ошибка получения данных с сервера");
@@ -96,8 +100,10 @@ export default {
 
     /** Получить отфильтрованный список постов */
     async getFilteredPosts(userId) {
-      this.posts = []
-      const res = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
+      this.posts = [];
+      const res = await fetch(
+        `https://jsonplaceholder.typicode.com/posts?userId=${userId}`
+      );
       const posts = await res.json();
       this.is_data_await = true;
       if (res.ok) {
@@ -127,7 +133,7 @@ export default {
 
     /** Получить список комментариев */
     async getComments() {
-      this.comments = []
+      this.comments = [];
       const res = await fetch("https://jsonplaceholder.typicode.com/comments");
       const comments = await res.json();
       if (res.ok) {
@@ -155,69 +161,107 @@ export default {
     showPostsUser(userId, username) {
       this.selectPostsTab();
       this.is_active_one_user = true;
-      this.name_filtered_user = username
+      this.name_filtered_user = username;
       this.posts = [];
-      this.getFilteredPosts(userId)
+      this.getFilteredPosts(userId);
     },
 
     /** Сбросить фильтр */
-    clearFilter(){
+    clearFilter() {
       this.posts = [];
       this.is_active_one_user = false;
-      this.getPosts()
-    }
+      this.getPosts();
+    },
+
+    /** Скроллинг */
+    // fHandleScroll(){
+    //     if (  window.scrollY + window.innerHeight >= document.body.scrollHeight
+    //         && !ctrl.status.is_loading_banners_request === true
+    //         && ctrl.status.curr_page_request < ctrl.status.page_total
+    //     ) {
+    //         ctrl.status.curr_page_request++;
+    //         ctrl.fGetRequestList();
+    //     }
+    // }
   },
   mounted() {
     this.getPosts();
+
+    // window.addEventListener('scroll', this.fHandleScroll);
   },
+  // destroyed() {
+  //       window.removeEventListener('scroll', this.fHandleScroll);
+  // }
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+$border_black: 1px solid black;
+$border_width: 1px solid;
+$margin_align_center: 0 auto;
+$tab_content_width: 83vw;
+$tab_content_margin_top: 2rem;
+$filtered_user_header_display: flex;
+$content_align_header: center;
+$button_close_size: 20px;
+$margin_left_close_button: 1rem;
+$background_close_button: url("../assets/close.svg");
+$hidden_view_block: none;
+$cursor: pointer;
+$tabs_display: flex;
+$tabs_gap: 30px;
+$tabs_content_align: center;
+$active_tab_color: grey;
+
 .tabs {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
+  display: $tabs_display;
+  gap: $tabs_gap;
+  justify-content: $tabs_content_align;
 }
 .active {
-  background-color: grey;
+  background-color: $active_tab_color;
 }
 
 .tab-content {
-  margin: 0 auto;
-  width: 83vw;
-  border: 1px solid black;
-  margin-top: 2rem;
+  margin: $margin_align_center;
+  width: $tab_content_width;
+  border: $border_black;
+  margin-top: $tab_content_margin_top;
 }
 .posts-tab,
 .users-tab {
   width: 40vw;
   border-color: black;
-  border-top: 1px solid;
-  border-left: 1px solid;
-  border-right: 1px solid;
+  border-top: $border_width;
+  border-left: $border_width;
+  border-right: $border_width;
 }
 
 .posts-tab:hover,
 .users-tab:hover {
-  cursor: pointer;
+  cursor: $cursor;
 }
 
+
+
 .hidden {
-  display: none;
+  display: $hidden_view_block;
 }
-.filtered-user_header{
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.filtered-user_header {
+  display: $filtered_user_header_display;
+  justify-content: $content_align_header;
+  align-items: $content_align_header;
 }
-.filtered-user_header button{
-  width: 20px;
-  height: 20px;
-  margin-left: 1rem;
-  background-image: url('../assets/close.svg'); 
-}
-.filtered-user_header button:hover{
-  cursor: pointer
+.filtered-user_header {
+  button {
+    width: $button_close_size;
+    height: $button_close_size;
+    margin-left: $margin_left_close_button;
+    background-image: $background_close_button;
+
+    &:hover{
+      cursor: $cursor;
+    }
+  }
 }
 </style>

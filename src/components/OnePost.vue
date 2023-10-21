@@ -58,38 +58,54 @@ export default {
 };
 </script>
   
-<style scoped>
+<style lang="scss" scoped>
+$border_one_post: 1px solid black;
+$display_one_post_container: flex;
+$add_comment_display: flex;
+$direction_posts_list: column;
+$direction_add_comment: column;
+$width_add-comment_block: 50%;
+$margin_align_center: 0 auto;
+$header_color: grey;
+$button_margin-top: 1rem;
+$comment_textarea_margin: 1rem 0;
+$comment_height: 100px;
+$comment_border: 1px solid red;
+$comment_header_weigth: bold;
+$post_header_weigth: bold;
+
 .one-post__container {
-  border: 1px solid black;
-  display: flex;
-  flex-direction: column;
+  border: $border_one_post;
+  display: $display_one_post_container;
+  flex-direction: $direction_posts_list;
 }
 .add-comment {
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-  margin: 0 auto;
+  display: $add_comment_display;
+  flex-direction: $direction_add_comment;
+  width: $width_add-comment_block;
+  margin: $margin_align_center;
 }
 h3 {
-  color: grey;
+  color: $header_color;
 }
 
 button {
-  margin-top: 1rem;
+  margin-top: $button_margin-top;
 }
 textarea {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  height: 100px;
+  margin: $comment_textarea_margin;
+  height: $comment_height;
 }
 .comments {
-  border: 1px solid red;
+  border: $comment_border;
 }
-.comments p {
-  font-weight: bold;
+.comments {
+  p {
+    font-weight: $comment_header_weigth;
+  }
 }
 .post {
-  font-weight: bold;
+  font-weight: $post_header_weigth;
 }
 </style>
   
