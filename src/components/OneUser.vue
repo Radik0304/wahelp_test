@@ -1,7 +1,7 @@
 <template>
     <div class="user_container">
-        <h3>{{ $props.user }}</h3>
-        <button>просмотреть комментарии</button>
+        <h3>{{ $props.username }}</h3>
+        <button @click="showPosts">просмотреть комментарии</button>
     </div>
   </template>
   
@@ -9,10 +9,16 @@
   export default {
     name: "OneUser",
     props: {
-        user: String,
-        userId: Number
+        username: String,
+        userId: Number,
+    },
+    methods: {
+      showPosts(){
+        this.$emit('showPostsUser', this.$props.userId, this.$props.username)
+      }
     }
   };
+
   </script>
   
   <style scoped>

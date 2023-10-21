@@ -25,6 +25,7 @@ export default {
     post: String,
     comments: Array,
     idUser: Number,
+    postId: Number,
   },
   data() {
     return {
@@ -33,24 +34,21 @@ export default {
   },
   methods: {
     /** Добавить комментарий */
-    // async addComment() {
-    //     const pushedData = {
-    //         id: this.$props.id,
-    //         body: this.enteredComment,
-    //     }
-    //   const res = await fetch("https://jsonplaceholder.typicode.com/comments", {
-    //     method: "POST",
-    //     body: JSON.stringify(pushedData),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    //   if(res.ok){
-    //     alert('комментарий добавлен')
-    //   } else {
-    //     console.log('Ошибка отправки данных')
-    //   }
-    // },
+    async addComment() {
+      const res = await fetch(`https://jsonplaceholder.typicode.com/comments?postId=${this.$props.postId}`, {
+        method: "POST",
+        body: JSON.parse(this.enteredComment),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if(res.ok){
+        this.$emit('getPosts')
+        alert('комментарий добавлен')
+      } else {
+        console.log('Ошибка отправки данных')
+      }
+    },
   },
 };
 </script>
