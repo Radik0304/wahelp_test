@@ -35,16 +35,21 @@ export default {
   methods: {
     /** Добавить комментарий */
     async addComment() {
+      const newCommentData = {
+        postId: this.$props.postId,
+        body: this.enteredComment,
+        email: 'any@mail.com'
+      }
       const res = await fetch(`https://jsonplaceholder.typicode.com/comments?postId=${this.$props.postId}`, {
         method: "POST",
-        body: JSON.parse(this.enteredComment),
+        body: JSON.stringify(newCommentData),
         headers: {
           "Content-Type": "application/json",
         },
       });
       if(res.ok){
-        this.$emit('getPosts')
         alert('комментарий добавлен')
+        this.$emit('getPosts')
       } else {
         console.log('Ошибка отправки данных')
       }

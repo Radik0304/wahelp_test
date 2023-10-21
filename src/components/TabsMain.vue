@@ -17,7 +17,7 @@
     <div class="tab-content">
       <div class="filtered-user_header" v-if="is_active_one_user && is_active_posts">
         <h2>Посты пользователя {{ name_filtered_user }}</h2>
-        <button @click="clearFilter">Сбросить фильтр</button>
+        <button class="close" @click="clearFilter"></button>
       </div>
       <div
         v-for="post in posts"
@@ -29,6 +29,7 @@
           :post="post.body"
           :comments="comments_groupBy[post.id]"
           :postId="post.id"
+          @getPosts="getPosts"
         />
       </div>
       <p v-if="is_data_await">Данные загружаются...</p>
@@ -42,7 +43,7 @@
           :username="user.name"
           :is_active_posts="is_active_posts"
           :is_active_users="is_active_users"
-          v-on:showPostsUser="showPostsUser"
+          @showPostsUser="showPostsUser"
         />
       </div>
       
@@ -80,9 +81,12 @@ export default {
   methods: {
     /** Получить список постов */
     async getPosts() {
+      this.posts = [];
       const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
       const posts = await res.json();
       if (res.ok) {
+        this.getComments()
+        this.getUsers()
         this.posts = posts;
       } else {
         console.log("Ошибка получения данных с сервера");
@@ -92,6 +96,7 @@ export default {
 
     /** Получить отфильтрованный список постов */
     async getFilteredPosts(userId) {
+      this.posts = []
       const res = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
       const posts = await res.json();
       this.is_data_await = true;
@@ -106,6 +111,7 @@ export default {
 
     /** Получить список пользователей */
     async getUsers() {
+      this.users = [];
       const res = await fetch("https://jsonplaceholder.typicode.com/users");
       const users = await res.json();
       this.is_data_await = true;
@@ -121,6 +127,7 @@ export default {
 
     /** Получить список комментариев */
     async getComments() {
+      this.comments = []
       const res = await fetch("https://jsonplaceholder.typicode.com/comments");
       const comments = await res.json();
       if (res.ok) {
@@ -149,21 +156,19 @@ export default {
       this.selectPostsTab();
       this.is_active_one_user = true;
       this.name_filtered_user = username
-      this.posts=[];
+      this.posts = [];
       this.getFilteredPosts(userId)
     },
 
     /** Сбросить фильтр */
     clearFilter(){
-      this.posts=[];
+      this.posts = [];
       this.is_active_one_user = false;
       this.getPosts()
     }
   },
-  created() {
+  mounted() {
     this.getPosts();
-    this.getUsers();
-    this.getComments();
   },
 };
 </script>
@@ -207,8 +212,12 @@ export default {
   align-items: center;
 }
 .filtered-user_header button{
-  width: 200px;
+  width: 20px;
   height: 20px;
   margin-left: 1rem;
+  background-image: url('../assets/close.svg'); 
+}
+.filtered-user_header button:hover{
+  cursor: pointer
 }
 </style>
