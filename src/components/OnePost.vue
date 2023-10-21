@@ -1,9 +1,9 @@
 <template>
   <div class="one-post__container">
-    <h3>{{ $props.user }}</h3>
+    <h3>{{ $props.idUser }}</h3>
     <span>{{ $props.comment }}</span>
     <div class="add-comment">
-      <button>Добавить комментарий</button>
+      <button @click="addComment">Добавить комментарий</button>
       <textarea type="text" v-model="enteredComment"></textarea>
     </div>
   </div>
@@ -15,7 +15,7 @@ export default {
   props: {
     user: String,
     comment: String,
-    id: Number,
+    idUser: Number,
   },
   data() {
     return {

@@ -1,51 +1,122 @@
 <template>
   <div class="main">
     <div class="tabs">
-      <div :class="['one-tab active', ]">Посты</div>
-      <div :class="['one-tab', {active}]">Пользователи</div>
+      <div
+        :class="['posts-tab', { active: is_active_posts }]"
+        @click="selectPostsTab"
+      >
+        Посты
+      </div>
+      <div
+        :class="['users-tab', { active: is_active_users }]"
+        @click="selectUsersTab"
+      >
+        Пользователи
+      </div>
     </div>
     <div class="tab-content">
-      <div v-for="post in posts" :key="post.postId">
-        <OnePost :user="post.title" :comment="post.body" :id="id"/>
+      <div
+        v-for="post in posts"
+        :key="post.postId"
+        :class="['posts_list', { hidden: !is_active_posts }]"
+      >
+        <OnePost :user="users_keyBy[post.userId]?.name" :comment="post.body" />
       </div>
+
     </div>
   </div>
 </template>
 
 <script>
-import OnePost from './OnePost.vue'
+import OnePost from "./OnePost.vue";
+// import _ from 'lodash'
+// import {isProxy, toRaw} from 'vue'
 export default {
-  name: 'TabsMain',
+  name: "TabsMain",
   components: {
-    OnePost
+    OnePost,
   },
-  data(){
+  data() {
     return {
-      posts: [],
-      comments: [],
-      users: [],
-      user: '',
-      comment: ''
-    }
+      posts: [], //посты
+      comments: [], //комменты
+      users: [], //пользователи
+      is_active_posts: true, //активен таб с постами
+      is_active_users: false, //активен таб с пользователями
+      posts_keyBy:{},
+      users_keyBy:{},
+      comments_keyBy:{}
+    };
   },
-  
+
   methods: {
     /** Получить список постов */
-    async getPosts(){
-      const res = await fetch('https://jsonplaceholder.typicode.com/posts')
-      const posts = await res.json()
-      if(res.ok){
-        this.posts = posts
+    async getPosts() {
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+      const posts = await res.json();
+      if (res.ok) {
+        this.posts = posts;
       } else {
-        console.log('Ошибка получения данных с сервера')
-        throw Error
+        console.log("Ошибка получения данных с сервера");
+        throw Error;
       }
     },
+
+    /** Получить список пользователей */
+    async getUsers() {
+      const res = await fetch("https://jsonplaceholder.typicode.com/users");
+      const users = await res.json();
+      if (res.ok) {
+        this.users = users;
+      } else {
+        console.log("Ошибка получения данных с сервера");
+        throw Error;
+      }
+    },
+
+    /** Получить список комментариев */
+    async getComments() {
+      const res = await fetch("https://jsonplaceholder.typicode.com/comments");
+      const comments = await res.json();
+      if (res.ok) {
+        this.comments = comments;
+      } else {
+        console.log("Ошибка получения данных с сервера");
+        throw Error;
+      }
+    },
+
+    // get fuck() {
+    //   const newArray = [];
+    //   for(let i =0; i < this.posts.length; i++){
+    //     for(let k=0; k < this.users.length; k++){
+    //       for(let j=0; j < this.comments.length; j++){
+    //         if(this.posts[i].userId===this.users[k].id && this.comments[j].postId===this.posts[i].id){
+    //           newArray.push(this.posts[i],this.users[k],this.comments[j])
+    //         }
+    //       }
+    //     }
+    //   }
+    //   return newArray
+    // },
+    /** Выбрать таб с постами */
+    selectPostsTab() {
+      this.is_active_posts = true;
+      this.is_active_users = false;
+    },
+
+    /** Выбрать таб с пользователями */
+    selectUsersTab() {
+      this.is_active_posts = false;
+      this.is_active_users = true;
+    },
   },
-  mounted(){
-    this.getPosts()
-  }
-}
+created() {
+    this.getPosts();
+    this.getUsers();
+    this.getComments();
+  },
+};
 </script>
 
 <style scoped>
@@ -54,7 +125,7 @@ export default {
   gap: 30px;
   justify-content: center;
 }
-.active{
+.active {
   background-color: grey;
 }
 
@@ -64,7 +135,8 @@ export default {
   border: 1px solid black;
   margin-top: 2rem;
 }
-.one-tab {
+.posts-tab,
+.users-tab {
   width: 40vw;
   border-color: black;
   border-top: 1px solid;
@@ -72,4 +144,12 @@ export default {
   border-right: 1px solid;
 }
 
+.posts-tab:hover,
+.users-tab:hover {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
 </style>
