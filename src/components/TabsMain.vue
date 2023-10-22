@@ -184,7 +184,6 @@ export default {
     fHandleScroll() {
       if (
         window.scrollY + window.innerHeight  >= document.body.scrollHeight - 50 &&
-        document.body.scrollHeight !== window.innerHeight &&
         !this.is_active_one_user &&
         !this.is_data_await
       ) {
