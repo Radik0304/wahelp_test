@@ -67,19 +67,23 @@ export default {
   },
   data() {
     return {
+      /** Массивы */
       posts: [], //посты
       comments: [], //комменты
       users: [], //пользователи
+
+      /** Cписки */
+      users_keyBy: {}, // список пользователей по id
+      comments_groupBy: {}, // список комментарий для каждого поста
+
+      /** Статусы */
       is_active_posts: true, //активен таб с постами
       is_active_users: false, //активен таб с пользователями
       is_data_await: true, // загрузка данных
       name_filtered_user: "", // имя пользователя, по котормоу фильтруем
       is_active_one_user: false, // смотрим посты одного пользователя
-      page: 1 /* начальная страница для получения постов */,
-      limit: 3 /* количество постов получаемых за один раз */,
-      more: true /* как только закончатся посты, назначаем false */,
-      users_keyBy: {}, // список пользователей по id
-      comments_groupBy: {}, // список комментарий для каждого поста
+      page: 1 /* текущая страница */,
+      limit: 20 /* количество постов получаемых за один раз */,
     };
   },
 
@@ -90,7 +94,10 @@ export default {
         `https://jsonplaceholder.typicode.com/posts?_page=${this.page}&_limit=${this.limit}`
       );
       const posts = await res.json();
+      this.is_data_await = true;
+
       if (res.ok) {
+        this.is_data_await = false;
         this.posts.push(...posts);
       } else {
         console.log("Ошибка получения данных с сервера");
@@ -175,10 +182,14 @@ export default {
 
     /** Скроллинг */
     fHandleScroll() {
-      if (window.scrollY + window.innerHeight >= document.body.scrollHeight && !this.is_active_one_user) {
-        console.log("скролл");
-        this.getPosts();
+      if (
+        window.scrollY + window.innerHeight  >= document.body.scrollHeight - 50 &&
+        document.body.scrollHeight !== window.innerHeight &&
+        !this.is_active_one_user &&
+        !this.is_data_await
+      ) {
         this.page++;
+          this.getPosts();
       }
     },
   },
@@ -187,6 +198,10 @@ export default {
     this.getComments();
     this.getUsers();
     window.addEventListener("scroll", this.fHandleScroll);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.fHandleScroll);
   },
 };
 </script>
