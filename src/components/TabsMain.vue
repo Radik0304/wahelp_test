@@ -75,6 +75,9 @@ export default {
       is_data_await: true, // загрузка данных
       name_filtered_user: "", // имя пользователя, по котормоу фильтруем
       is_active_one_user: false, // смотрим посты одного пользователя
+      page: 1 /* начальная страница для получения постов */,
+      limit: 3 /* количество постов получаемых за один раз */,
+      more: true /* как только закончатся посты, назначаем false */,
       users_keyBy: {}, // список пользователей по id
       comments_groupBy: {}, // список комментарий для каждого поста
     };
@@ -83,15 +86,12 @@ export default {
   methods: {
     /** Получить список постов */
     async getPosts() {
-      this.posts = [];
       const res = await fetch(
-        `https://jsonplaceholder.typicode.com/posts?offset=1&pageSize=10`
+        `https://jsonplaceholder.typicode.com/posts?_page=${this.page}&_limit=${this.limit}`
       );
       const posts = await res.json();
       if (res.ok) {
-        this.getComments();
-        this.getUsers();
-        this.posts = posts;
+        this.posts.push(...posts);
       } else {
         console.log("Ошибка получения данных с сервера");
         throw Error;
@@ -174,24 +174,20 @@ export default {
     },
 
     /** Скроллинг */
-    // fHandleScroll(){
-    //     if (  window.scrollY + window.innerHeight >= document.body.scrollHeight
-    //         && !ctrl.status.is_loading_banners_request === true
-    //         && ctrl.status.curr_page_request < ctrl.status.page_total
-    //     ) {
-    //         ctrl.status.curr_page_request++;
-    //         ctrl.fGetRequestList();
-    //     }
-    // }
+    fHandleScroll() {
+      if (window.scrollY + window.innerHeight >= document.body.scrollHeight && !this.is_active_one_user) {
+        console.log("скролл");
+        this.getPosts();
+        this.page++;
+      }
+    },
   },
   mounted() {
     this.getPosts();
-
-    // window.addEventListener('scroll', this.fHandleScroll);
+    this.getComments();
+    this.getUsers();
+    window.addEventListener("scroll", this.fHandleScroll);
   },
-  // destroyed() {
-  //       window.removeEventListener('scroll', this.fHandleScroll);
-  // }
 };
 </script>
 
@@ -242,8 +238,6 @@ $active_tab_color: grey;
   cursor: $cursor;
 }
 
-
-
 .hidden {
   display: $hidden_view_block;
 }
@@ -259,7 +253,7 @@ $active_tab_color: grey;
     margin-left: $margin_left_close_button;
     background-image: $background_close_button;
 
-    &:hover{
+    &:hover {
       cursor: $cursor;
     }
   }
